@@ -1,7 +1,7 @@
 package zero.info.request;
 
 import lombok.Data;
-import web.enu.InfoSearchOperateTypeEnum;
+import zero.info.enu.InfoSearchOperateTypeEnum;
 
 import java.io.Serializable;
 import java.util.List;

@@ -1,7 +1,7 @@
 package zero.info.response;
 
 import lombok.Data;
-import web.enu.HttpResponseCodeEnum;
+import zero.info.enu.HttpResponseCodeEnum;
 
 import java.io.Serializable;
 

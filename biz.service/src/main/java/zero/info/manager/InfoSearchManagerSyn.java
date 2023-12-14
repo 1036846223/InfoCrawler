@@ -6,6 +6,7 @@ import org.springframework.util.CollectionUtils;
 import us.codecraft.webmagic.ResultItems;
 import us.codecraft.webmagic.Spider;
 import us.codecraft.webmagic.processor.example.WeChatPublicAccountProcessor;
+import zero.info.dto.UrlContentDTO;
 import zero.info.request.InfoSearchRequest;
 import zero.info.service.ZhihuCrawlerServiceV1;
 import zero.info.service.ZhihuPipelineV1;

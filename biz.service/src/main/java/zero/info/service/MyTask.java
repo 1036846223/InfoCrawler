@@ -1,7 +1,6 @@
 package zero.info.service;
-import us.codecraft.webmagic.Site;
-import us.codecraft.webmagic.Task;
-public class MyTask implements Task {
+
+public class MyTask {
     private String uuid;
 
     public MyTask(String uuid) {

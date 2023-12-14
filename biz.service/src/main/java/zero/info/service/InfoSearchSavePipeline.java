@@ -1,10 +1,6 @@
 package zero.info.service;
 
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Task;
-import us.codecraft.webmagic.manager.SaveManager;
-import us.codecraft.webmagic.pipeline.Pipeline;
-import web.dto.OriginContent;
+import zero.info.dto.OriginContent;
 
 import javax.annotation.Resource;
 import java.util.List;

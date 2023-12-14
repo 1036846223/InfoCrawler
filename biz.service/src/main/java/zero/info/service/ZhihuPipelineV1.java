@@ -1,9 +1,6 @@
 package zero.info.service;
 
 import org.springframework.stereotype.Service;
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Task;
-import us.codecraft.webmagic.pipeline.Pipeline;
 
 import java.util.concurrent.*;
 
