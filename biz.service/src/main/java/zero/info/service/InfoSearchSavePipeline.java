@@ -3,6 +3,7 @@ package zero.info.service;
 import zero.info.dto.OriginContent;
 import zero.info.item.ResultItems;
 import zero.info.item.Task;
+import zero.info.manager.SaveManager;
 import zero.info.pipeline.Pipeline;
 
 import javax.annotation.Resource;
