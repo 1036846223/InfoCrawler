@@ -1,9 +1,10 @@
 package zero.info.service;
 
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Task;
-import us.codecraft.webmagic.pipeline.Pipeline;
-import web.dto.OriginContent;
+
+import zero.info.dto.OriginContent;
+import zero.info.item.ResultItems;
+import zero.info.item.Task;
+import zero.info.pipeline.Pipeline;
 
 import java.util.ArrayList;
 import java.util.List;

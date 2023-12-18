@@ -3,12 +3,15 @@ import com.alibaba.fastjson.JSON;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import us.codecraft.webmagic.ResultItems;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.processor.example.WeChatPublicAccountProcessor;
+import zero.info.dto.OriginContent;
 import zero.info.dto.UrlContentDTO;
+import zero.info.item.ResultItems;
+import zero.info.item.Spider;
+import zero.info.processor.example.WeChatPublicAccountProcessor;
 import zero.info.request.InfoSearchRequest;
+import zero.info.response.HttpResponse;
 import zero.info.service.ZhihuCrawlerServiceV1;
+import zero.info.service.ZhihuPipeline;
 import zero.info.service.ZhihuPipelineV1;
 
 

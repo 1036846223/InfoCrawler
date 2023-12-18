@@ -1,6 +1,9 @@
 package zero.info.service;
 
 import org.springframework.stereotype.Service;
+import zero.info.item.ResultItems;
+import zero.info.item.Task;
+import zero.info.pipeline.Pipeline;
 
 import java.util.concurrent.*;
 
