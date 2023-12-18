@@ -1,5 +1,6 @@
 package zero.info.processor.example;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -21,15 +22,17 @@ public class WeChatPublicAccountProcessor implements PageProcessor {
 
     @Override
     public void process(Page page) {
-        Document document = Jsoup.parse(page.getHtml().toString());
 
+        Document document = page.getHtml().getDocument();
         // 选择所有的 div 元素
-        Elements divElements = document.getElementsByTag("div");
+        Elements divElements = document.getAllElements();
         StringBuilder str= new StringBuilder();
         // 遍历 div 元素并取出文字内容
         for (Element divElement : divElements) {
-            String textContent = divElement.text(); // 取出 div 元素的文字内容
-            str.append(textContent).append("/n");
+            String textContent = divElement.text();
+            if(StringUtils.isNoneEmpty(textContent)){
+                str.append(textContent).append("/n");
+            }
         }
         page.putField("text", str.toString());
 
@@ -44,7 +47,8 @@ public class WeChatPublicAccountProcessor implements PageProcessor {
     public static void main(String[] args) {
         //single download
         String urlTemplate = "https://mp.weixin.qq.com/s/Jz6RzHwg1nOTbhqLFSiDrQ";
-        Spider.create(new WeChatPublicAccountProcessor()).addUrl(urlTemplate).run();
+        String url2="https://mp.weixin.qq.com/s/uR5dYC-d4FPClEI-HqxsjA";
+        Spider.create(new WeChatPublicAccountProcessor()).addUrl(url2).run();
 
     }
 }

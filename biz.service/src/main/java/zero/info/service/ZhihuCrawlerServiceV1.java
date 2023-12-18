@@ -2,10 +2,11 @@ package zero.info.service;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
-import us.codecraft.webmagic.Spider;
-import us.codecraft.webmagic.pipeline.Pipeline;
-import us.codecraft.webmagic.processor.PageProcessor;
-import us.codecraft.webmagic.processor.example.ZhihuPageProcessor;
+import zero.info.item.Spider;
+import zero.info.pipeline.Pipeline;
+import zero.info.processor.PageProcessor;
+import zero.info.processor.example.ZhihuPageProcessor;
+
 
 import java.util.List;
 import java.util.concurrent.*;

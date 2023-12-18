@@ -1,16 +1,8 @@
 package zero.info.item;
 
-import us.codecraft.webmagic.utils.HttpConstant;
-
+import zero.info.utils.HttpConstant;
 import java.util.*;
 
-/**
- * Object contains setting for crawler.<br>
- *
- * @author code4crafter@gmail.com <br>
- * @see us.codecraft.webmagic.processor.PageProcessor
- * @since 0.1.0
- */
 public class Site {
 
     private String domain;
@@ -262,14 +254,6 @@ public class Site {
         return headers;
     }
 
-    /**
-     * Put an Http header for downloader. <br>
-     * Use {@link #addCookie(String, String)} for cookie and {@link #setUserAgent(String)} for user-agent. <br>
-     *
-     * @param key   key of http header, there are some keys constant in {@link HttpConstant.Header}
-     * @param value value of header
-     * @return this
-     */
     public Site addHeader(String key, String value) {
         headers.put(key, value);
         return this;
