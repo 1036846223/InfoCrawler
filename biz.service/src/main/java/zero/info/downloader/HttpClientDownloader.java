@@ -15,6 +15,7 @@ import zero.info.proxy.ProxyProvider;
 import zero.info.selector.PlainText;
 import zero.info.utils.CharsetUtils;
 import zero.info.utils.HttpClientUtils;
+import zero.info.utils.IOUtils;
 
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -104,9 +105,8 @@ public class HttpClientDownloader extends AbstractDownloader {
     }
 
     protected Page handleResponse(Request request, String charset, HttpResponse httpResponse, Task task) throws IOException {
-//        byte[] bytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
+        byte[] bytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
 //        IOUtilsReplacement
-        byte[] bytes = IOUtilsReplacement.toByteArrayByContent(httpResponse.getEntity().getContent());
         String contentType = httpResponse.getEntity().getContentType() == null ? "" : httpResponse.getEntity().getContentType().getValue();
         Page page = new Page();
         page.setBytes(bytes);

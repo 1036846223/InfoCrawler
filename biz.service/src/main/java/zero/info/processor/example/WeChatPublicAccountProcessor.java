@@ -25,13 +25,14 @@ public class WeChatPublicAccountProcessor implements PageProcessor {
 
         Document document = page.getHtml().getDocument();
         // 选择所有的 div 元素
-        Elements divElements = document.getAllElements();
+        Elements divElements = document.select("div");
         StringBuilder str= new StringBuilder();
         // 遍历 div 元素并取出文字内容
         for (Element divElement : divElements) {
             String textContent = divElement.text();
             if(StringUtils.isNoneEmpty(textContent)){
-                str.append(textContent).append("/n");
+                str.append(textContent);
+                break;
             }
         }
         page.putField("text", str.toString());
