@@ -1,5 +1,6 @@
 package zero.info.downloader;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -104,9 +105,7 @@ public class HttpClientDownloader extends AbstractDownloader {
     }
 
     protected Page handleResponse(Request request, String charset, HttpResponse httpResponse, Task task) throws IOException {
-//        byte[] bytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
-//        IOUtilsReplacement
-        byte[] bytes = IOUtilsReplacement.toByteArrayByContent(httpResponse.getEntity().getContent());
+        byte[] bytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
         String contentType = httpResponse.getEntity().getContentType() == null ? "" : httpResponse.getEntity().getContentType().getValue();
         Page page = new Page();
         page.setBytes(bytes);
