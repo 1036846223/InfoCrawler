@@ -34,10 +34,13 @@ public class InfoSearchManagerAsy {
 //        List<String> urlList = new ArrayList<>();
 //        urlList.add("https://mp.weixin.qq.com/s/jw73RkgyfjQc09v_cbEYzQ");
 //        request.setUrlList(urlList);
-////        infoSearchManagerASY.InfoSearchMetaToSave(request);
+//        搜索并保存为txt文件
+//        infoSearchManagerASY.InfoSearchMetaToSave(request);
+//        搜索并返回相关信息
 //        List<UrlContentDTO> content = infoSearchManagerASY.InfoSearchSaveAndReturn(request);
 //        System.out.println(JSON.toJSONString(content));
 //    }
+//
 
 
     public Boolean InfoSearchMetaToSave(InfoSearchRequest request) {

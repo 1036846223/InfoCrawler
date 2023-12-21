@@ -23,19 +23,21 @@ public class WeChatPublicAccountProcessor implements PageProcessor {
     @Override
     public void process(Page page) {
 
-        Document doc = page.getHtml().getDocument();;
-        Elements divElements = doc.select("div");
-        StringBuilder divText = new StringBuilder();
-        for (Element div : divElements) {
-            if (StringUtils.isNotEmpty(div.text())) {
-                //暂无比较好的数据清洗办法,就只取第一个
-                divText.append(div.text());
+        Document document = page.getHtml().getDocument();
+        // 选择所有的 div 元素
+        Elements divElements = document.select("div");
+        StringBuilder str= new StringBuilder();
+        // 遍历 div 元素并取出文字内容
+        for (Element divElement : divElements) {
+            String textContent = divElement.text();
+            if(StringUtils.isNoneEmpty(textContent)){
+                str.append(textContent);
                 break;
             }
         }
-        page.putField("text", divText.toString());
+        page.putField("text", str.toString());
 
-//        System.out.println(divText.toString());
+        System.out.println(str.toString());
     }
 
     @Override

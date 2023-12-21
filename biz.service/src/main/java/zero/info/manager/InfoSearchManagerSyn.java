@@ -36,6 +36,8 @@ public class InfoSearchManagerSyn {
         InfoSearchManagerSyn infoSearchManagerASY = new InfoSearchManagerSyn();
         InfoSearchRequest request= new InfoSearchRequest();
         List<String> urlList= new ArrayList<>();
+        String url1="https://mp.weixin.qq.com/s/Jz6RzHwg1nOTbhqLFSiDrQ";
+        urlList.add(url1);
         request.setUrlList(urlList);
         infoSearchManagerASY.InfoSearchMetaV2(request);
     }
@@ -56,6 +58,7 @@ public class InfoSearchManagerSyn {
             ResultItems resultItems = spider.<ResultItems>get(String.format(urlTemplate));
 
             log.info("InfoSearch_res,request={},res=null", JSON.toJSONString(request));
+            spider.stop();
             return null;
         } catch (Exception e) {
             log.error("InfoSearch_error,request={}", JSON.toJSONString(request), e);
