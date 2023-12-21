@@ -20,6 +20,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+/**
+ * 同步,提供单个接口查询及保存服务
+ * chaser
+ */
 @Service
 @Slf4j
 public class InfoSearchManagerSyn {
