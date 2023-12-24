@@ -37,7 +37,7 @@ public class WeChatPublicAccountProcessor implements PageProcessor {
         }
         page.putField("text", str.toString());
 
-        System.out.println(str.toString());
+//        System.out.println(str.toString());
     }
 
     @Override

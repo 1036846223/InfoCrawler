@@ -1,6 +1,6 @@
 server:
   # 端口
-  port: 6001
+  port: 9090
   servlet:
     # 项目名称
-    context-path : /infoCraw
+    context-path : /craw
