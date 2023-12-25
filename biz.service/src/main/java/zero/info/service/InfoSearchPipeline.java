@@ -10,6 +10,7 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
+
 public class InfoSearchPipeline implements Pipeline {
 
     private List<OriginContent> contents = new CopyOnWriteArrayList<>();
