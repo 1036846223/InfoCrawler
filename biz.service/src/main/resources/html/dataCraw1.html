@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优化后的搜索界面chaser</title>
+    <style>
+        body, html {
+            height: 100%;
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #ffffff; /* 整体背景色改为白色 */
+        }
+
+        .flex-container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+
+        .search-box {
+            display: flex;
+            align-items: center;
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #d9d9d9;
+            border-radius: 20px; /* 输入框边角变圆 */
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 添加轻微的阴影 */
+            margin-bottom: 20px;
+        }
+
+        #inputText {
+            flex-grow: 1;
+            padding: 10px;
+            font-size: 16px;
+            border: none;
+            outline: none;
+            background-color: transparent;
+        }
+
+        #output {
+            padding: 10px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            width: 100%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            max-height: 300px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+<div class="flex-container">
+    <div class="search-box">
+        <input type="text" id="inputText" placeholder="请输入查询内容" onkeydown="searchOnEnter(event)">
+    </div>
+    <div id="output"></div>
+</div>
+
+<script>
+    function searchOnEnter(event) {
+        if (event.key === 'Enter') {
+            var input = document.getElementById('inputText').value;
+            var output = document.getElementById('output');
+            var dataToSend = {
+                urlList: [input],
+                operateType: 1
+            };
+
+            fetch('/craw/info', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0) {
+                        output.innerHTML = data.Data || '没有返回数据';
+                        output.style.display = 'block';
+                    } else {
+                        output.textContent = '错误: ' + data.msg;
+                        output.style.display = 'block';
+                    }
+                })
+                .catch((error) => {
+                    output.textContent = '请求失败: ' + error;
+                    output.style.display = 'block';
+                });
+        }
+    }
+
+    document.getElementById('inputText').addEventListener('keydown', searchOnEnter);
+</script>
+</body>
+</html>
