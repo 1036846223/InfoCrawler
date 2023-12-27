@@ -3,77 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>优化后的搜索界面chaser</title>
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #ffffff; /* 整体背景色改为白色 */
-        }
-
-        .flex-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            padding: 20px;
-            max-width: 600px;
-            margin: auto;
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d9d9d9;
-            border-radius: 20px; /* 输入框边角变圆 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 添加轻微的阴影 */
-            margin-bottom: 20px;
-        }
-
-        #inputText {
-            flex-grow: 1;
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            outline: none;
-            background-color: transparent;
-        }
-
-        #output {
-            padding: 10px;
-            border: 1px solid #d9d9d9;
-            border-radius: 4px;
-            width: 100%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            overflow-y: auto;
-            max-height: 300px;
-            display: none;
-        }
-    </style>
+    <title>优化后的搜索界面chaser,增加一个一键复制文本的功能</title>
+    <link rel="stylesheet" href="styles.css"> <!-- 引用外部CSS文件 -->
 </head>
 <body>
 <div class="flex-container">
     <div class="search-box">
-        <input type="text" id="inputText" placeholder="请输入查询内容" onkeydown="searchOnEnter(event)">
+        <input type="text" id="inputText" placeholder="请输入需要转换的网址">
     </div>
     <div id="output"></div>
 </div>
 
 <script>
+    // 1. 抽离接口域名
+    const apiBaseUrl = 'http://localhost:9090/craw/'; // 示例域名，实际使用时替换为正确的域名
+
     function searchOnEnter(event) {
         if (event.key === 'Enter') {
             var input = document.getElementById('inputText').value;
             var output = document.getElementById('output');
+
+            // 2. 支持多个输入
+            var urls = input.split(',').map(function (url) {
+                return url.trim(); // 去除空格
+            });
+
             var dataToSend = {
-                urlList: [input],
+                urlList: urls,
                 operateType: 1
             };
 
-            fetch('/craw/info', {
+            fetch(apiBaseUrl + 'info/single/search', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,8 +42,24 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.code === 0) {
-                        output.innerHTML = data.Data || '没有返回数据';
+                    // 判断code为0且data数组中至少有一个元素
+                    if (data.code === 0 && data.data && data.data.length > 0) {
+                        // 使用map和join处理多个数据项，以换行符分隔
+                        const contentOutput = data.data
+                            .map(item => item.content) // 获取所有content
+                            .filter(content => content) // 过滤掉空的content
+                            .join('<br>'); // 以换行符分隔内容
+
+                        // 检查处理后的内容是否为空
+                        if (contentOutput) {
+                            output.innerHTML = contentOutput;
+                            output.style.display = 'block';
+                        } else {
+                            output.textContent = '请更换网址';
+                            output.style.display = 'block';
+                        }
+                    } else if (data.code === 0) {
+                        output.textContent = '请更换网址';
                         output.style.display = 'block';
                     } else {
                         output.textContent = '错误: ' + data.msg;
@@ -91,12 +67,11 @@
                     }
                 })
                 .catch((error) => {
-                    output.textContent = '请求失败: ' + error;
+                    output.textContent = '网络繁忙，请稍后再试';
                     output.style.display = 'block';
                 });
         }
     }
-
     document.getElementById('inputText').addEventListener('keydown', searchOnEnter);
 </script>
 </body>
