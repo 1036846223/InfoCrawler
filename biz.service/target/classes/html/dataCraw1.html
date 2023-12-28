@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优化后的搜索界面chaser</title>
+    <link rel="stylesheet" href="styles.css"> <!-- 引用外部CSS文件 -->
+</head>
+<body>
+<div class="flex-container">
+    <div class="search-box">
+        <input type="text" id="inputText" placeholder="请输入需要转换的网址" onkeydown="searchOnEnter(event)">
+    </div>
+    <div id="output"></div>
+</div>
+
+<script>
+    // 1. 抽离接口域名
+    const apiBaseUrl = 'http://localhost:9090/craw/'; // 示例域名，实际使用时替换为正确的域名
+
+    function searchOnEnter(event) {
+        if (event.key === 'Enter') {
+            var input = document.getElementById('inputText').value;
+            var output = document.getElementById('output');
+
+            // 2. 支持多个输入
+            var urls = input.split(',').map(function (url) {
+                return url.trim(); // 去除空格
+            });
+
+            var dataToSend = {
+                urlList: urls,
+                operateType: 1
+            };
+
+            fetch(apiBaseUrl + 'info/single/search', { // 使用抽离的接口域名
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.code === 0 && data.Data) {
+                        output.innerHTML = data.Data;
+                        output.style.display = 'block';
+                    } else if (data.code === 0 && !data.Data) {
+                        output.textContent = '请更换网址';
+                        output.style.display = 'block';
+                    } else {
+                        output.textContent = '错误: ' + data.msg;
+                        output.style.display = 'block';
+                    }
+                })
+                .catch((error) => {
+                    output.textContent = '网络繁忙，请稍后再试';
+                    output.style.display = 'block';
+                });
+        }
+    }
+
+    document.getElementById('inputText').addEventListener('keydown', searchOnEnter);
+</script>
+</body>
+</html>
