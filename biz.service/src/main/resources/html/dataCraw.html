@@ -1,109 +1,72 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>优化后的搜索界面chaser</title>
-    <style>
-        body, html {
-            height: 100%;
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background-color: #ffffff; /* 整体背景色改为白色 */
-        }
-
-        .flex-container {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            padding: 20px;
-            max-width: 600px;
-            margin: auto;
-            position: relative; /* 相对定位 */
-            top: -20%; /* 上移，使输入框在页面40%的高度处 */
-        }
-
-        .search-box {
-            display: flex;
-            align-items: center;
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #d9d9d9;
-            border-radius: 20px; /* 输入框边角变圆 */
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* 添加轻微的阴影 */
-            margin-bottom: 20px;
-        }
-
-        #inputText {
-            flex-grow: 1;
-            padding: 10px;
-            font-size: 16px;
-            border: none;
-            outline: none;
-            background-color: transparent;
-        }
-
-        #output {
-            padding: 10px;
-            border: 1px solid #d9d9d9;
-            border-radius: 4px;
-            width: 100%;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-            overflow-y: auto;
-            max-height: 300px;
-            display: none;
-        }
-    </style>
+    <title>优化后的搜索界面chaser,增加一个一键复制文本的功能</title>
+    <link rel="stylesheet" href="styles.css"> <!-- 引用外部CSS文件 -->
+    <link rel="stylesheet" href="animations.css"> <!-- 引用抽离的动画CSS文件 -->
 </head>
 <body>
 <div class="flex-container">
     <div class="search-box">
-        <input type="text" id="inputText" placeholder="请输入需要转换的网址" onkeydown="searchOnEnter(event)">
+        <input type="text" id="inputText" placeholder="请输入需要转换的网址">
+        <div id="loader" class="loader hidden"></div>
     </div>
     <div id="output"></div>
 </div>
 
 <script>
-    function searchOnEnter(event) {
-        if (event.key === 'Enter') {
-            var input = document.getElementById('inputText').value;
-            var output = document.getElementById('output');
-            var dataToSend = {
-                urlList: [input],
-                operateType: 1
-            };
+    const apiBaseUrl = 'http://localhost:9090/craw/';
 
-            fetch('/craw/info', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(dataToSend),
-            })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.code === 0 && data.Data) {
-                        output.innerHTML = data.Data;
-                        output.style.display = 'block';
-                    } else if (data.code === 0 && !data.Data) {
-                        output.textContent = '请更换网址';
-                        output.style.display = 'block';
-                    } else {
-                        output.textContent = '错误: ' + data.msg;
-                        output.style.display = 'block';
-                    }
-                })
-                .catch((error) => {
-                    output.textContent = '网络繁忙，请稍后再试';
-                    output.style.display = 'block';
-                });
+    // 控制加载动画的显示和隐藏
+    function toggleLoader(display) {
+        const loader = document.getElementById('loader');
+        if (display) {
+            loader.classList.remove('hidden');
+        } else {
+            loader.classList.add('hidden');
         }
     }
 
-    document.getElementById('inputText').addEventListener('keydown', searchOnEnter);
+    // 执行搜索
+    function search(input) {
+        const output = document.getElementById('output');
+        toggleLoader(true); // 显示加载动画
+
+        const urls = input.split(',').map(url => url.trim());
+
+        fetch(apiBaseUrl + 'info/single/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({urlList: urls, operateType: 1}),
+        })
+            .then(response => response.json())
+            .then(data => {
+                toggleLoader(false); // 隐藏加载动画
+                if (data.code === 0 && data.data && data.data.length > 0) {
+                    const contentOutput = data.data.map(item => item.content).filter(content => content).join('<br>');
+                    output.innerHTML = contentOutput || '请更换网址';
+                } else {
+                    output.textContent = '错误: ' + (data.msg || '请更换网址');
+                }
+                output.style.display = 'block';
+            })
+            .catch(error => {
+                toggleLoader(false); // 隐藏加载动画
+                output.textContent = '网络繁忙，请稍后再试';
+                output.style.display = 'block';
+            });
+    }
+
+    // 事件监听
+    document.getElementById('inputText').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            search(event.target.value);
+        }
+    });
 </script>
 </body>
 </html>

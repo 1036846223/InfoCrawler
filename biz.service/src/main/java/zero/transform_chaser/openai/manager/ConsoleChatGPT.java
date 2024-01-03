@@ -1,3 +1,4 @@
+/*
 package zero.transform_chaser.openai.manager;
 
 import lombok.*;
@@ -18,11 +19,13 @@ import java.util.concurrent.CountDownLatch;
 import java.util.stream.Collectors;
 
 
+*/
 /**
  * open ai 客户端
  *
  * @author plexpt
- */
+ *//*
+
 
 @Data
 @Builder
@@ -161,3 +164,4 @@ public class ConsoleChatGPT {
 
 }
 
+*/

@@ -4,9 +4,10 @@ import cn.hutool.core.util.StrUtil;
 import com.knuddels.jtokkit.Encodings;
 import com.knuddels.jtokkit.api.Encoding;
 import com.knuddels.jtokkit.api.EncodingRegistry;
-import com.plexpt.chatgpt.entity.chat.ChatCompletion;
-import com.plexpt.chatgpt.entity.chat.Message;
 import lombok.experimental.UtilityClass;
+import zero.transform_chaser.openai.model.ChatCompletion;
+import zero.transform_chaser.openai.model.Message;
+import zero.transform_chaser.openai.model.enu.ModelEnum;
 
 import java.util.HashMap;
 import java.util.List;
@@ -20,7 +21,7 @@ public class TokensUtil {
     private static final EncodingRegistry encodingRegistry = Encodings.newDefaultEncodingRegistry();
 
     static {
-        for (ChatCompletion.Model model : ChatCompletion.Model.values()) {
+        for (ModelEnum model : ModelEnum.values()) {
             Optional<Encoding> encodingForModel = encodingRegistry.getEncodingForModel(model.getName());
             encodingForModel.ifPresent(encoding -> modelEncodingMap.put(model.getName(), encoding));
         }
@@ -28,8 +29,9 @@ public class TokensUtil {
 
     /**
      * 计算tokens
+     *
      * @param modelName 模型名称
-     * @param messages 消息列表
+     * @param messages  消息列表
      * @return 计算出的tokens数量
      */
 

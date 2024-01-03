@@ -33,7 +33,7 @@ public class InfoSearchManagerMeta {
 //    public static void main(String[] args) {
 //        InfoSearchManagerAsy infoSearchManagerASY = new InfoSearchManagerAsy();
 //        InfoSearchRequest request = new InfoSearchRequest();
-//        List<String> urlList = new ArrayList<>();
+//        List<String> urlList = new ArrayLis<>();
 //        urlList.add("https://mp.weixin.qq.com/s/jw73RkgyfjQc09v_cbEYzQ");
 //        request.setUrlList(urlList);
 //        搜索并保存为txt文件
