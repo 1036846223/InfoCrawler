@@ -32,7 +32,7 @@ public class SimplePageProcessor implements PageProcessor {
         page.addTargetRequests(requests);
         //extract by XPath
         page.putField("title", page.getHtml().xpath("//title"));
-        page.putField("html", page.getHtml().toString());
+        page.putField("static/html", page.getHtml().toString());
         //extract by Readability
         page.putField("content", page.getHtml().smartContent());
     }
