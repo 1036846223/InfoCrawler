@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>优化后的搜索界面,增加一个一键复制文本的功能</title>
+    <link rel="stylesheet" href="styles.css"> <!-- 引用外部CSS文件 -->
+    <link rel="stylesheet" href="animations.css"> <!-- 引用抽离的动画CSS文件 -->
+</head>
+<body>
+<div class="flex-container">
+    <div class="search-box">
+        <input type="text" id="inputText" placeholder="请输入需要转换的网址">
+        <div id="loader" class="loader hidden"></div>
+    </div>
+    <div id="output"></div>
+</div>
+
+<script>
+    const apiBaseUrl = 'http://103.144.28.34:9090/craw/';
+
+    // 控制加载动画的显示和隐藏
+    function toggleLoader(display) {
+        const loader = document.getElementById('loader');
+        if (display) {
+            loader.classList.remove('hidden');
+        } else {
+            loader.classList.add('hidden');
+        }
+    }
+
+    // 执行搜索
+    function search(input) {
+        const output = document.getElementById('output');
+        toggleLoader(true); // 显示加载动画
+
+        const urls = input.split(',').map(url => url.trim());
+
+        fetch(apiBaseUrl + 'info/single/search', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({urlList: urls, operateType: 1}),
+        })
+            .then(response => response.json())
+            .then(data => {
+                toggleLoader(false); // 隐藏加载动画
+                if (data.code === 0 && data.data && data.data.length > 0) {
+                    const contentOutput = data.data.map(item => item.content).filter(content => content).join('<br>');
+                    output.innerHTML = contentOutput || '请更换网址';
+                } else {
+                    output.textContent = '错误: ' + (data.msg || '请更换网址');
+                }
+                output.style.display = 'block';
+            })
+            .catch(error => {
+                toggleLoader(false); // 隐藏加载动画
+                output.textContent = '网络繁忙，请稍后再试';
+                output.style.display = 'block';
+            });
+    }
+
+    // 事件监听
+    document.getElementById('inputText').addEventListener('keydown', function (event) {
+        if (event.key === 'Enter') {
+            search(event.target.value);
+        }
+    });
+</script>
+</body>
+</html>

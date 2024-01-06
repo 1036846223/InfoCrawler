@@ -1,4 +1,4 @@
-/*
+package zero.transform.openai.manager;/*
 package zero.transform_chaser.openai.manager;
 
 import lombok.*;
