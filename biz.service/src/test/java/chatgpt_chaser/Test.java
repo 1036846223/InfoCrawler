@@ -2,12 +2,12 @@ package chatgpt_chaser;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Before;
-import zero.transform_chaser.openai.Proxys;
-import zero.transform_chaser.openai.manager.ChatGPT;
-import zero.transform_chaser.openai.model.ChatCompletion;
-import zero.transform_chaser.openai.model.ChatCompletionResponse;
-import zero.transform_chaser.openai.model.Message;
-import zero.transform_chaser.openai.model.enu.ModelEnum;
+import zero.transform.openai.Proxys;
+import zero.transform.openai.manager.ChatGPT;
+import zero.transform.openai.model.ChatCompletion;
+import zero.transform.openai.model.ChatCompletionResponse;
+import zero.transform.openai.model.Message;
+import zero.transform.openai.model.enu.ModelEnum;
 
 import java.net.Proxy;
 import java.util.Arrays;

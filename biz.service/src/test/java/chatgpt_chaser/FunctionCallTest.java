@@ -3,10 +3,10 @@ package chatgpt_chaser;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import org.junit.Before;
-import zero.transform_chaser.openai.Proxys;
-import zero.transform_chaser.openai.manager.ChatGPT;
-import zero.transform_chaser.openai.model.*;
-import zero.transform_chaser.openai.model.enu.ModelEnum;
+import zero.transform.openai.Proxys;
+import zero.transform.openai.manager.ChatGPT;
+import zero.transform.openai.model.*;
+import zero.transform.openai.model.enu.ModelEnum;
 
 import java.net.Proxy;
 import java.util.ArrayList;

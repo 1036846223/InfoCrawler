@@ -5,12 +5,12 @@ import org.junit.Test;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import zero.transform_chaser.openai.Proxys;
-import zero.transform_chaser.openai.listener.ConsoleStreamListener;
-import zero.transform_chaser.openai.listener.SseStreamListener;
-import zero.transform_chaser.openai.manager.ChatGPTStream;
-import zero.transform_chaser.openai.model.ChatCompletion;
-import zero.transform_chaser.openai.model.Message;
+import zero.transform.openai.Proxys;
+import zero.transform.openai.listener.ConsoleStreamListener;
+import zero.transform.openai.listener.SseStreamListener;
+import zero.transform.openai.manager.ChatGPTStream;
+import zero.transform.openai.model.ChatCompletion;
+import zero.transform.openai.model.Message;
 
 import java.net.Proxy;
 import java.util.Arrays;
