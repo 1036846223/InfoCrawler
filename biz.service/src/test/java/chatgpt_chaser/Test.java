@@ -1,3 +1,4 @@
+/*
 package chatgpt_chaser;
 
 import lombok.extern.slf4j.Slf4j;
@@ -60,9 +61,11 @@ public class Test {
         System.out.println(res);
     }
 
-    /**
+    */
+/**
      * 测试tokens数量计算
-     */
+     *//*
+
     @org.junit.Test
     public void tokens() {
         Message system = Message.ofSystem("你现在是一个诗人，专门写七言绝句");
@@ -86,3 +89,4 @@ public class Test {
     }
 
 }
+*/

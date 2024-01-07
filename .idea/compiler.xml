@@ -15,6 +15,7 @@
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="InfoCrawler" options="-parameters" />
       <module name="biz.service" options="-parameters" />
     </option>
   </component>

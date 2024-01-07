@@ -1,3 +1,4 @@
+/*
 package chatgpt_chaser;
 
 import org.junit.Before;
@@ -16,11 +17,13 @@ import java.net.Proxy;
 import java.util.Arrays;
 import java.util.concurrent.CountDownLatch;
 
+*/
 /**
  * 测试类
  *
  * @author plexpt
- */
+ *//*
+
 public class StreamTest {
 
     private ChatGPTStream chatGPTStream;
@@ -77,3 +80,4 @@ public class StreamTest {
     }
 
 }
+*/

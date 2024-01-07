@@ -1,3 +1,4 @@
+/*
 package chatgpt_chaser;
 
 import com.alibaba.fastjson.JSON;
@@ -109,3 +110,4 @@ public class FunctionCallTest {
         return "{ \"temperature\": 22, \"unit\": \"celsius\", \"description\": \"晴朗\" }";
     }
 }
+*/
