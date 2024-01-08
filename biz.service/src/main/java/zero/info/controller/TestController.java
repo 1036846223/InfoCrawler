@@ -11,6 +11,6 @@ public class TestController {
     @GetMapping("/hello")
     public String index() {
         return "Hello World!" +
-                "your process success chaser";
+                "your process success";
     }
 }

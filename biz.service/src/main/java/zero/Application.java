@@ -9,7 +9,7 @@ public class Application {
     public static void main(String[] args) {
 
         SpringApplication.run(Application.class, args);
-        System.out.println("application run success-chaser");
+        System.out.println("application run success");
         log.warn("////////////////////////////////////////////////////////////////////");
         log.warn("//							_ooOoo_								  //");
         log.warn("//						   o8888888o							  //");
