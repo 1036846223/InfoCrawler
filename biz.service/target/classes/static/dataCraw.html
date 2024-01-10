@@ -3,70 +3,126 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>网站转换器-chaser</title>
+    <title>网站转换器</title>
+
     <link rel="stylesheet" href="styles.css"> <!-- 引用外部CSS文件 -->
-    <link rel="stylesheet" href="animations.css"> <!-- 引用抽离的动画CSS文件 -->
 </head>
 <body>
 <div class="flex-container">
     <div class="search-box">
         <input type="text" id="inputText" placeholder="请输入需要转换的网址">
-        <div id="loader" class="loader hidden"></div>
+        <div class="loader" style="display: none;"></div> <!-- 加载动画 -->
     </div>
+
     <div id="output"></div>
+    <button id="copyButton" style="display: none;">复制文本</button>
 </div>
 
 <script>
-    const apiBaseUrl = 'http://103.144.28.34:9090/craw/';
+    // 1. 抽离接口域名
+    // const apiBaseUrl = 'http://localhost:10000/'; // 示例域名，实际使用时替换为正确的域名
+    const apiBaseUrl = 'http://103.144.28.34:10000/'; // 测试域名
 
-    // 控制加载动画的显示和隐藏
-    function toggleLoader(display) {
-        const loader = document.getElementById('loader');
-        if (display) {
-            loader.classList.remove('hidden');
-        } else {
-            loader.classList.add('hidden');
-        }
-    }
 
-    // 执行搜索
-    function search(input) {
-        const output = document.getElementById('output');
-        toggleLoader(true); // 显示加载动画
-
-        const urls = input.split(',').map(url => url.trim());
-
-        fetch(apiBaseUrl + 'info/single/search', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({urlList: urls, operateType: 1}),
-        })
-            .then(response => response.json())
-            .then(data => {
-                toggleLoader(false); // 隐藏加载动画
-                if (data.code === 0 && data.data && data.data.length > 0) {
-                    const contentOutput = data.data.map(item => item.content).filter(content => content).join('<br>');
-                    output.innerHTML = contentOutput || '请更换网址';
-                } else {
-                    output.textContent = '错误: ' + (data.msg || '请更换网址');
-                }
-                output.style.display = 'block';
-            })
-            .catch(error => {
-                toggleLoader(false); // 隐藏加载动画
-                output.textContent = '网络繁忙，请稍后再试';
-                output.style.display = 'block';
-            });
-    }
-
-    // 事件监听
-    document.getElementById('inputText').addEventListener('keydown', function (event) {
+    function searchOnEnter(event) {
         if (event.key === 'Enter') {
-            search(event.target.value);
+            var input = document.getElementById('inputText').value;
+            var output = document.getElementById('output');
+            var loader = document.querySelector('.loader'); // 获取加载动画元素
+
+            // 显示加载动画
+            loader.style.display = 'block';
+
+            // 2. 支持多个输入
+            var urls = input.split(',').map(function (url) {
+                return url.trim(); // 去除空格
+            });
+
+            var dataToSend = {
+                urlList: urls,
+                operateType: 1
+            };
+
+            fetch(apiBaseUrl + 'info/single/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(dataToSend),
+            })
+                .then(response => response.json())
+                .then(data => {
+                    loader.style.display = 'none';
+
+                    // 判断code为0且data数组中至少有一个元素
+                    if (data.code === 0 && data.data && data.data.length > 0) {
+                        // 使用map和join处理多个数据项，以换行符分隔
+                        const contentOutput = data.data
+                            .map(item => item.content) // 获取所有content
+                            .filter(content => content) // 过滤掉空的content
+                            .join('<br>'); // 以换行符分隔内容
+
+                        // 检查处理后的内容是否为空
+                        if (contentOutput) {
+                            output.innerHTML = contentOutput;
+                            output.style.display = 'block';
+                            document.getElementById('copyButton').style.display = 'inline-block'; // 显示复制按钮
+                        } else {
+                            output.textContent = '请更换网址';
+                            output.style.display = 'block';
+                            document.getElementById('copyButton').style.display = 'none'; // 隐藏复制按钮
+                        }
+                    } else if (data.code === 0) {
+                        output.textContent = '请更换网址';
+                        output.style.display = 'block';
+                        document.getElementById('copyButton').style.display = 'none'; // 隐藏复制按钮
+                    } else {
+                        output.textContent = '错误: ' + data.msg;
+                        output.style.display = 'block';
+                        document.getElementById('copyButton').style.display = 'none'; // 隐藏复制按钮
+                    }
+                })
+                .catch((error) => {
+                    // 隐藏加载动画
+                    loader.style.display = 'none';
+
+                    output.textContent = '网络繁忙，请稍后再试';
+                    output.style.display = 'block';
+                });
         }
+    }
+
+    // 复制文本到剪贴板的函数
+    function copyToClipboard(text) {
+        if (navigator.clipboard) {
+            navigator.clipboard.writeText(text).then(function () {
+                console.log('文本已复制到剪贴板');
+            }).catch(function (err) {
+                console.error('无法复制文本: ', err);
+            });
+        } else {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+            try {
+                const successful = document.execCommand('copy');
+                const msg = successful ? '成功' : '失败';
+                console.log('后备方案: 复制文本 ' + msg);
+            } catch (err) {
+                console.error('后备方案: 无法复制文本', err);
+            }
+            document.body.removeChild(textArea);
+        }
+    }
+
+    // 为复制按钮添加点击事件监听器
+    document.getElementById('copyButton').addEventListener('click', function () {
+        const outputText = document.getElementById('output').innerText;
+        copyToClipboard(outputText);
     });
+    document.getElementById('inputText').addEventListener('keydown', searchOnEnter);
 </script>
 </body>
 </html>

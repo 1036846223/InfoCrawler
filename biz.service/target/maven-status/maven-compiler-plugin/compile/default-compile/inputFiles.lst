@@ -45,6 +45,7 @@
 /Users/chaser/InfoCrawler/biz.service/src/main/java/zero/transform/openai/exception/ChatException.java
 /Users/chaser/InfoCrawler/biz.service/src/main/java/zero/info/enu/HttpResponseCodeEnum.java
 /Users/chaser/InfoCrawler/biz.service/src/main/java/zero/info/utils/BeanMapper.java
+/Users/chaser/InfoCrawler/biz.service/src/main/java/zero/info/controller/RedirectController.java
 /Users/chaser/InfoCrawler/biz.service/src/main/java/zero/info/manager/InfoSearchManagerSyn.java
 /Users/chaser/InfoCrawler/biz.service/src/main/java/zero/transform/response/AudioResponse.java
 /Users/chaser/InfoCrawler/biz.service/src/main/java/zero/transform/response/billing/Datum.java

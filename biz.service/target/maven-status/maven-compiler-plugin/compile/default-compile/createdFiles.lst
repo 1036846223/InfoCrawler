@@ -94,6 +94,7 @@ zero/info/selector/Selectable.class
 zero/transform/openai/manager/ChatGPTStream$ChatGPTStreamBuilder.class
 zero/info/utils/HttpConstant$StatusCode.class
 zero/info/utils/FilePersistentBase.class
+zero/info/controller/RedirectController.class
 zero/info/scheduler/component/HashSetDuplicateRemover.class
 zero/info/processor/example/GithubRepoPageProcessor.class
 zero/info/utils/WMCollections.class
