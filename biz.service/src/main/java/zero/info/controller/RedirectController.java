@@ -9,7 +9,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @Slf4j
 public class RedirectController {
 
-    private static final String baseUrl = "http://103.144.28.34:10000/";
+    private static final String baseUrl = "https://www.jujue.icu/";
 
     @RequestMapping("/test")
     public RedirectView redirectWithUsingRedirectTestView() {
