@@ -9,7 +9,8 @@ import org.springframework.web.servlet.view.RedirectView;
 @Slf4j
 public class RedirectController {
 
-    private static final String baseUrl = "https://www.jujue.icu/";
+        private static final String baseUrl = "http://www.jujue.icu/";
+//    private static final String baseUrl = "http://localhost:10000/"; // 测试域名
 
     @RequestMapping("/test")
     public RedirectView redirectWithUsingRedirectTestView() {
@@ -17,7 +18,7 @@ public class RedirectController {
         return new RedirectView(baseUrl + "dataCraw1.html");
     }
 
-    @RequestMapping("/")
+    @RequestMapping("/menu")
     public RedirectView redirectWithUsingRedirectView() {
         log.info("stable,redirectSuc");
         return new RedirectView(baseUrl + "dataCraw.html");
