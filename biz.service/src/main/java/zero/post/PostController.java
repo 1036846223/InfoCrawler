@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import zero.info.enu.HttpResponseCodeEnum;
 import zero.info.manager.InfoSearchManagerSyn;
 import zero.info.response.HttpResponse;
+import zero.post.dto.ContentDTO;
 import zero.post.dto.PostDTO;
 
 import javax.annotation.Resource;
@@ -24,9 +25,11 @@ public class PostController {
         try {
             List<PostDTO> postDTOS = new ArrayList<>();
             PostDTO postDTO = new PostDTO();
-            postDTO.setContent("test1");
+            ContentDTO contentDTO = new ContentDTO();
+            contentDTO.setText("谁有形势与政策这本书呀？");
+            postDTO.setContent(contentDTO);
             postDTO.setId(7L);
-            postDTO.setNickName("dylan");
+            postDTO.setName("dylan");
             postDTO.setSendTime(new Date().getTime());
             postDTOS.add(postDTO);
             return HttpResponse.success(postDTOS);

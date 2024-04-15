@@ -7,8 +7,9 @@ import java.io.Serializable;
 @Data
 public class PostDTO implements Serializable {
     private Long id;
-    private String content;
-    private String nickName;
+    private ContentDTO content;
+    private String url;
+    private String name;
     private Long sendTime;
 
 }
