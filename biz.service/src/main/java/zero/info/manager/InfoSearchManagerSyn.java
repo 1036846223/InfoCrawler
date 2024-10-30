@@ -33,16 +33,6 @@ public class InfoSearchManagerSyn {
 
     private static final String CLAZZ_TYPE = InfoSearchManagerSyn.class.getSimpleName();
 
-//
-//    public static void main(String[] args) {
-//        InfoSearchManagerSyn infoSearchManagerASY = new InfoSearchManagerSyn();
-//        InfoSearchRequest request= new InfoSearchRequest();
-//        List<String> urlList= new ArrayList<>();
-//        String url1="https://mp.weixin.qq.com/s/Jz6RzHwg1nOTbhqLFSiDrQ";
-//        urlList.add(url1);
-//        request.setUrlList(urlList);
-//        infoSearchManagerASY.InfoSearchMetaV2(request);
-//    }
 
     public HttpResponse<String> singleInfoSearchToStr(InfoSearchRequest request) {
         log.info("singleInfoSearch,request={}", JSON.toJSONString(request));
