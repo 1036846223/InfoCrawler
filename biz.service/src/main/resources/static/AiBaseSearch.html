@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI早报生成器</title>
+    <style>
+        body {
+            display: flex;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        #left, #right {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+        #right {
+            border-left: none;
+        }
+        .item {
+            padding: 10px;
+            margin: 10px 0;
+            border: 1px solid #ccc;
+            background-color: #f9f9f9;
+            cursor: move;
+        }
+        .item p {
+            margin: 5px 0;
+        }
+        #copyButton {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+<div id="left">
+    <h3>选择数据</h3>
+    <div id="leftList"></div>
+</div>
+<div id="right">
+    <h3>已选择数据</h3>
+    <div id="rightList"></div>
+    <button id="copyButton">复制</button>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const leftList = document.getElementById('leftList');
+        const rightList = document.getElementById('rightList');
+        const copyButton = document.getElementById('copyButton');
+
+        // const apiBaseUrl = 'http://www.jujue.icu/';
+        // const apiBaseUrl = 'http://103.144.28.34:10000/'; // 测试域名
+        const apiBaseUrl = 'http://localhost:10000/'; // 测试域名
+
+        // Fetch data from the API
+        fetch(apiBaseUrl + '/info/aiBaseSearch')
+            .then(response => response.json())
+            .then(data => {
+                data.data.forEach((item, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'item';
+
+                    const checkbox = document.createElement('input');
+                    checkbox.type = 'checkbox';
+                    checkbox.addEventListener('change', () => {
+                        if (checkbox.checked) {
+                            addToRight(item, index);
+                        } else {
+                            removeFromRight(item);
+                        }
+                    });
+
+                    const content = document.createElement('p');
+                    content.textContent = item.content;
+
+                    div.appendChild(checkbox);
+                    div.appendChild(content);
+
+                    leftList.appendChild(div);
+                });
+            });
+
+        function addToRight(item, index) {
+            const div = document.createElement('div');
+            div.className = 'item';
+            div.draggable = true;
+            div.dataset.index = index;
+
+            div.addEventListener('dragstart', dragStart);
+            div.addEventListener('dragover', dragOver);
+            div.addEventListener('drop', drop);
+
+            const content = document.createElement('p');
+            content.textContent = item.content;
+
+            const deleteButton = document.createElement('button');
+            deleteButton.textContent = '删除';
+            deleteButton.addEventListener('click', () => {
+                rightList.removeChild(div);
+            });
+
+            div.appendChild(content);
+            div.appendChild(deleteButton);
+
+            rightList.appendChild(div);
+        }
+
+        function removeFromRight(item) {
+            const items = rightList.querySelectorAll('.item p');
+            items.forEach(contentElement => {
+                if (contentElement.textContent === item.content) {
+                    rightList.removeChild(contentElement.parentElement);
+                }
+            });
+        }
+
+        let draggedItem = null;
+
+        function dragStart(e) {
+            draggedItem = this;
+            e.dataTransfer.effectAllowed = 'move';
+        }
+
+        function dragOver(e) {
+            e.preventDefault();
+            e.dataTransfer.dropEffect = 'move';
+        }
+
+        function drop(e) {
+            e.preventDefault();
+            if (draggedItem !== this) {
+                const items = Array.from(rightList.children);
+                const draggedIndex = items.indexOf(draggedItem);
+                const targetIndex = items.indexOf(this);
+
+                if (draggedIndex < targetIndex) {
+                    rightList.insertBefore(draggedItem, this.nextSibling);
+                } else {
+                    rightList.insertBefore(draggedItem, this);
+                }
+            }
+        }
+
+        copyButton.addEventListener('click', () => {
+            const items = rightList.querySelectorAll('.item p');
+            const text = Array.from(items).map(item => item.textContent).join('\n');
+            navigator.clipboard.writeText(text).then(() => {
+                alert('内容已复制到剪贴板');
+            });
+        });
+    });
+</script>
+</body>
+</html>

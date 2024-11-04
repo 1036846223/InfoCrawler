@@ -16,7 +16,7 @@ public class ScheduledTasks {
     private AIInfoManager aiInfoManager;
 
     //每天9点03分运行一次
-    @Scheduled(cron = "0 3 9 * * ?")
+//    @Scheduled(cron = "0 3 9 * * ?")
     public void performTask() {
         try {
             Long startTime = new Date().getTime();

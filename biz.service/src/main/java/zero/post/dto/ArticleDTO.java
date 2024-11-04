@@ -5,12 +5,12 @@ import lombok.Data;
 import java.io.Serializable;
 
 @Data
-public class Article implements Serializable {
+public class ArticleDTO implements Serializable {
     private String time;
     private String title;
     private String introduction;
 
-    public Article(String time, String title, String introduction) {
+    public ArticleDTO(String time, String title, String introduction) {
         this.time = time;
         this.title = title;
         this.introduction = introduction;
