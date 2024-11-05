@@ -7,4 +7,5 @@ import java.io.Serializable;
 @Data
 public class ArticleOutDTO implements Serializable {
     private String content;
+    private String time;
 }

@@ -22,6 +22,8 @@
             border-left: none;
         }
         .item {
+            display: flex;
+            align-items: center;
             padding: 10px;
             margin: 10px 0;
             border: 1px solid #ccc;
@@ -29,7 +31,12 @@
             cursor: move;
         }
         .item p {
-            margin: 5px 0;
+            margin: 0 0 0 10px;
+            flex: 1;
+        }
+        .item .index {
+            font-weight: bold;
+            margin-right: 10px;
         }
         #copyButton {
             margin-top: 10px;
@@ -58,8 +65,6 @@
         const rightList = document.getElementById('rightList');
         const copyButton = document.getElementById('copyButton');
 
-        // const apiBaseUrl = 'http://www.jujue.icu/';
-        // const apiBaseUrl = 'http://103.144.28.34:10000/'; // 测试域名
         const apiBaseUrl = 'http://localhost:10000/'; // 测试域名
 
         // Fetch data from the API
@@ -74,9 +79,11 @@
                     checkbox.type = 'checkbox';
                     checkbox.addEventListener('change', () => {
                         if (checkbox.checked) {
-                            addToRight(item, index);
+                            addToRight(item);
+                            updateRightListIndices();
                         } else {
                             removeFromRight(item);
+                            updateRightListIndices();
                         }
                     });
 
@@ -90,15 +97,17 @@
                 });
             });
 
-        function addToRight(item, index) {
+        function addToRight(item) {
             const div = document.createElement('div');
             div.className = 'item';
             div.draggable = true;
-            div.dataset.index = index;
 
             div.addEventListener('dragstart', dragStart);
             div.addEventListener('dragover', dragOver);
             div.addEventListener('drop', drop);
+
+            const indexSpan = document.createElement('span');
+            indexSpan.className = 'index';
 
             const content = document.createElement('p');
             content.textContent = item.content;
@@ -107,8 +116,10 @@
             deleteButton.textContent = '删除';
             deleteButton.addEventListener('click', () => {
                 rightList.removeChild(div);
+                updateRightListIndices();
             });
 
+            div.appendChild(indexSpan);
             div.appendChild(content);
             div.appendChild(deleteButton);
 
@@ -121,6 +132,14 @@
                 if (contentElement.textContent === item.content) {
                     rightList.removeChild(contentElement.parentElement);
                 }
+            });
+        }
+
+        function updateRightListIndices() {
+            const items = rightList.querySelectorAll('.item');
+            items.forEach((item, index) => {
+                const indexSpan = item.querySelector('.index');
+                indexSpan.textContent = (index + 1) + '.';
             });
         }
 
@@ -148,12 +167,17 @@
                 } else {
                     rightList.insertBefore(draggedItem, this);
                 }
+                updateRightListIndices();
             }
         }
 
         copyButton.addEventListener('click', () => {
-            const items = rightList.querySelectorAll('.item p');
-            const text = Array.from(items).map(item => item.textContent).join('\n');
+            const items = rightList.querySelectorAll('.item');
+            const text = Array.from(items).map(item => {
+                const index = item.querySelector('.index').textContent;
+                const content = item.querySelector('p').textContent;
+                return `${index}${content}`;
+            }).join('\n');
             navigator.clipboard.writeText(text).then(() => {
                 alert('内容已复制到剪贴板');
             });

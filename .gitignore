@@ -1,5 +1,5 @@
 # Default ignored files
-/workspace.xml
+/.idea/workspace.xml
 # Created by .ignore support plugin (hsz.mobi)
 !.mvn/wrapper/maven-wrapper.jar
 

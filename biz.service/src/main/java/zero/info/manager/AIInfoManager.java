@@ -67,6 +67,7 @@ public class AIInfoManager {
         try {
             ArticleOutDTO articleOutDTO = new ArticleOutDTO();
             articleOutDTO.setContent(articleDTO.getTitle());
+            articleOutDTO.setTime(articleDTO.getTime());
             return articleOutDTO;
 
         } catch (Exception e) {
