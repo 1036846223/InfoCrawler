@@ -172,6 +172,35 @@
             }
         }
 
+        function copyToClipboard(text) {
+            if (navigator.clipboard && window.isSecureContext) {
+                // 如果支持并且在安全上下文中
+                navigator.clipboard.writeText(text).then(() => {
+                    alert('内容已复制到剪贴板');
+                }).catch(err => {
+                    console.error('复制失败:', err);
+                    alert('复制失败');
+                });
+            } else {
+                // 回退到使用 document.execCommand('copy')
+                const textArea = document.createElement('textarea');
+                textArea.value = text;
+                textArea.style.position = 'fixed';  // 避免在页面滚动时影响布局
+                document.body.appendChild(textArea);
+                textArea.focus();
+                textArea.select();
+                try {
+                    const successful = document.execCommand('copy');
+                    const msg = successful ? '内容已复制到剪贴板' : '复制失败';
+                    alert(msg);
+                } catch (err) {
+                    console.error('复制失败:', err);
+                    alert('复制失败');
+                }
+                document.body.removeChild(textArea);
+            }
+        }
+
         copyButton.addEventListener('click', () => {
             const items = rightList.querySelectorAll('.item');
             const text = Array.from(items).map(item => {
@@ -179,10 +208,9 @@
                 const content = item.querySelector('p').textContent;
                 return `${index}${content}`;
             }).join('\n');
-            navigator.clipboard.writeText(text).then(() => {
-                alert('内容已复制到剪贴板');
-            });
+            copyToClipboard(text);
         });
+
     });
 </script>
 </body>
