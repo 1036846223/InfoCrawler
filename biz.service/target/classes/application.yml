@@ -1,6 +1,0 @@
-server:
-  # 端口 正式端口一般用10000
-  port: 10000
-  servlet:
-    # 项目名称
-    context-path : ""
