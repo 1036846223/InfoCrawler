@@ -128,6 +128,32 @@
             <artifactId>junit</artifactId>
             <scope>test</scope>
         </dependency>
+
+        <!-- mysql mybatis-->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-jdbc</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.18</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+            <version>1.1.20</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>3.2.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-generator</artifactId>
+            <version>3.2.0</version>
+        </dependency>
     </dependencies>
     <build>
         <finalName>${project.artifactId}</finalName>
@@ -138,4 +164,60 @@
             </plugin>
         </plugins>
     </build>
+
+    <!-- 配置 Maven 仓库 -->
+    <repositories>
+        <repository>
+            <id>aliyun-central</id>
+            <name>Aliyun Maven Central Repository</name>
+            <url>https://maven.aliyun.com/repository/central</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>aliyun-spring</id>
+            <name>Aliyun Spring Repository</name>
+            <url>https://maven.aliyun.com/repository/spring</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>aliyun-spring-plugin</id>
+            <name>Aliyun Spring Plugins Repository</name>
+            <url>https://maven.aliyun.com/repository/spring-plugin</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
+
+    <!-- 配置插件仓库 -->
+    <pluginRepositories>
+        <pluginRepository>
+            <id>aliyun-central</id>
+            <name>Aliyun Maven Central Repository</name>
+            <url>https://maven.aliyun.com/repository/central</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>aliyun-spring</id>
+            <name>Aliyun Spring Repository</name>
+            <url>https://maven.aliyun.com/repository/spring</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>aliyun-spring-plugin</id>
+            <name>Aliyun Spring Plugins Repository</name>
+            <url>https://maven.aliyun.com/repository/spring-plugin</url>
+        </pluginRepository>
+    </pluginRepositories>
 </project>

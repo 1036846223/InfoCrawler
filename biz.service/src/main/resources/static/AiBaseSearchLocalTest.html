@@ -11,6 +11,7 @@
             margin: 0;
             font-family: Arial, sans-serif;
         }
+
         #left, #right {
             flex: 1;
             padding: 10px;
@@ -18,9 +19,11 @@
             border: 1px solid #ddd;
             box-sizing: border-box;
         }
+
         #right {
             border-left: none;
         }
+
         .item {
             display: flex;
             align-items: center;
@@ -30,14 +33,17 @@
             background-color: #f9f9f9;
             cursor: move;
         }
+
         .item p {
             margin: 0 0 0 10px;
             flex: 1;
         }
+
         .item .index {
             font-weight: bold;
             margin-right: 10px;
         }
+
         #copyButton {
             margin-top: 10px;
             padding: 10px;
@@ -65,9 +71,8 @@
         const rightList = document.getElementById('rightList');
         const copyButton = document.getElementById('copyButton');
 
-        // const apiBaseUrl = 'http://www.jujue.icu/';
         const apiBaseUrl = 'http://117.72.45.164:10000/'; // 线上域名
-        // const apiBaseUrl = 'http://localhost:10000/'; // 测试域名
+
         // Fetch data from the API
         fetch(apiBaseUrl + '/info/aiBaseSearch')
             .then(response => response.json())
@@ -174,7 +179,6 @@
 
         function copyToClipboard(text) {
             if (navigator.clipboard && window.isSecureContext) {
-                // 如果支持并且在安全上下文中
                 navigator.clipboard.writeText(text).then(() => {
                     alert('内容已复制到剪贴板');
                 }).catch(err => {
@@ -182,10 +186,9 @@
                     alert('复制失败');
                 });
             } else {
-                // 回退到使用 document.execCommand('copy')
                 const textArea = document.createElement('textarea');
                 textArea.value = text;
-                textArea.style.position = 'fixed';  // 避免在页面滚动时影响布局
+                textArea.style.position = 'fixed';
                 document.body.appendChild(textArea);
                 textArea.focus();
                 textArea.select();
@@ -208,7 +211,26 @@
                 const content = item.querySelector('p').textContent;
                 return `${index}${content}`;
             }).join('\n');
-            copyToClipboard(text);
+
+            // Determine the report type based on the current time
+            const now = new Date();
+            const hours = now.getHours();
+            const dateStr = (now.getMonth() + 1).toString().padStart(2, '0') + (now.getDate()).toString().padStart(2, '0');
+            let reportType = '日报';
+            if (hours > 0 && hours < 12) {
+                reportType = '早报';
+            } else if (hours >= 12 && hours < 18) {
+                reportType = '午报';
+            } else {
+                reportType = '晚报';
+            }
+
+            //0101早报
+            const title = `${dateStr}${reportType}`;
+
+            // Copy the text with the title
+            const fullText = `${title}\n\n${text}`;
+            copyToClipboard(fullText);
         });
 
     });
