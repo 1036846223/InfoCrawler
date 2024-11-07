@@ -24,6 +24,8 @@ import zero.info.db.mapper.ContentInfoMapper;
 import zero.info.dto.ContentInfoBO;
 
 import javax.annotation.Resource;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -35,6 +37,7 @@ public class AccountInfoManager {
     private ContentInfoMapper contentInfoMapper;
 
 
+    //todo
     public Pair<Boolean, String> addOrUpdateAccountInfo(ContentInfoBO infoBO) {
         try {
 
@@ -117,105 +120,25 @@ public class AccountInfoManager {
         return accountInfo;
     }
 
-
-    public PageResponse<SearchAccountRoleDTO> roleList(@RequestBody BatchSearchRoleRequest request) {
+    //生成hashid
+    public static String generateUniqueIdentifier(String input) {
         try {
-
-            String account = request.getAccount();
-            //手机号
-            String phone = request.getPhone();
-
-            //todo 暂不支持roleType+其他的查询能力 -- 多表联查
-            //暂只支持以account或phone 为主的查询
-            Integer roleType = request.getRoleType();
-            //从0开始
-            Long pageNo = request.getPageNo();
-            Long pageSize = request.getPageSize();
-
-            QueryWrapper<AccountInfo> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("status", StatusEnum.VALID.getCode());
-            if (StringUtils.isNotEmpty(account)) {
-                queryWrapper.like("account", "%s" + account + "%s");
+            // 创建 SHA-256 的 MessageDigest 实例
+            MessageDigest digest = MessageDigest.getInstance("SHA-256");
+            // 计算输入字符串的哈希值
+            byte[] hashBytes = digest.digest(input.getBytes());
+            // 将哈希值转换为十六进制字符串
+            StringBuilder hexString = new StringBuilder();
+            for (byte b : hashBytes) {
+                String hex = Integer.toHexString(0xff & b);
+                if (hex.length() == 1) hexString.append('0');
+                hexString.append(hex);
             }
-            if (StringUtils.isNotEmpty(phone)) {
-                queryWrapper.like("phone", "%s" + phone + "%s");
-            }
-
-            // 使用 count 方法获取满足条件的记录总数
-            int count = accountInfoMapper.selectCount(queryWrapper);
-
-            if (count == 0) {
-                return PageResponse.success();
-            }
-
-            queryWrapper.orderByDesc("id");
-
-            Page<AccountInfo> page = new Page<>(pageNo, pageSize);
-            //先查账号信息
-            Page<AccountInfo> dbInfoPage = (Page<AccountInfo>) accountInfoMapper.selectPage(page, queryWrapper);
-            if (dbInfoPage == null || CollectionUtils.isEmpty(dbInfoPage.getRecords())) {
-                return PageResponse.success();
-            }
-
-//            再查关联关系
-            List<Long> accountIdList = dbInfoPage.getRecords().stream().map(AccountInfo::getId).collect(Collectors.toList());
-            QueryWrapper<AccountRoleRel> roleRelQueryWrapper = new QueryWrapper<AccountRoleRel>().in("account_id", accountIdList);
-            if (roleType != null) {
-                roleRelQueryWrapper.eq("role_type", roleType);
-            }
-            roleRelQueryWrapper.eq("status", StatusEnum.VALID.getCode());
-
-            List<AccountRoleRel> roleRelList = accountRoleRelMapper.selectList(roleRelQueryWrapper);
-            Map<Long, List<AccountRoleRel>> roleRelMap = new HashMap<>();
-            roleRelList.stream().forEach(e -> {
-                if (roleRelMap.containsKey(e.getAccountId())) {
-                    roleRelMap.get(e.getAccountId()).add(e);
-                } else {
-                    List<AccountRoleRel> list = new ArrayList<>();
-                    list.add(e);
-                    roleRelMap.put(e.getAccountId(), list);
-                }
-            });
-
-            List<SearchAccountRoleDTO> roleDTOList = dbInfoPage.getRecords().stream().map(e -> {
-                        return buildSearchAccountRoleDTO(e, roleRelMap.get(e.getId()));
-                    }).filter(Objects::nonNull)
-                    .sorted(Comparator.comparing(SearchAccountRoleDTO::getAccountId).reversed())
-                    .collect(Collectors.toList());
-            PageResponse<SearchAccountRoleDTO> pageResponse = PageResponse.success(roleDTOList);
-            pageResponse.setTotal((long) count);
-            pageResponse.setPageNo(pageNo);
-            pageResponse.setPageSize(pageSize);
-
-            log.info("roleList_res,req={},res={}", JSON.toJSONString(request), JSON.toJSONString(pageResponse));
-            return pageResponse;
-        } catch (Exception e) {
-            log.error("roleList_error,request={}", JSON.toJSONString(request), e);
+            // 截取前10个字符
+            return hexString.toString().substring(0, 10);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
         }
-        return PageResponse.fail();
-    }
-
-
-    public SearchAccountRoleDTO buildSearchAccountRoleDTO(AccountInfo accountInfo, List<AccountRoleRel> roleRelList) {
-        try {
-            if (accountInfo == null) {
-                return null;
-            }
-            SearchAccountRoleDTO roleDTO = new SearchAccountRoleDTO();
-            roleDTO.setAccount(accountInfo.getAccount());
-            roleDTO.setPhone(accountInfo.getPhone());
-            roleDTO.setAccountId(accountInfo.getId());
-            roleDTO.setAddTime(accountInfo.getAddTime());
-            roleDTO.setUpdateTime(accountInfo.getUpdateTime());
-            if (CollectionUtils.isNotEmpty(roleRelList)) {
-                roleDTO.setRoleTypeList(roleRelList.stream().map(AccountRoleRel::getRoleType).collect(Collectors.toList()));
-            }
-            return roleDTO;
-        } catch (Exception e) {
-            log.error("buildSearchAccountRoleDTO_error,accountInfo={},roleRelList={}",
-                    JSON.toJSONString(accountInfo), JSON.toJSONString(roleRelList), e);
-        }
-        return null;
     }
 
 
