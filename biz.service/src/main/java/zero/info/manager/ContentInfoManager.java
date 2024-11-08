@@ -21,7 +21,7 @@ import java.util.*;
 
 @Service
 @Slf4j
-public class AccountInfoManager {
+public class ContentInfoManager {
 
     @Resource
     private ContentInfoMapper contentInfoMapper;
