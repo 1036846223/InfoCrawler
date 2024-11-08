@@ -5,13 +5,14 @@ import lombok.EqualsAndHashCode;
 import zero.info.enu.*;
 
 import java.io.Serializable;
-import java.util.Date;
 
 
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class ContentInfoBO implements Serializable {
 
+
+    private Long id;
     /**
      * @see OperateTypeEnum
      */

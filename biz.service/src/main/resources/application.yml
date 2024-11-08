@@ -1,6 +1,42 @@
+#配置数据源
+spring:
+  datasource:
+    druid:
+      driver-class-name: com.mysql.cj.jdbc.Driver
+      url: jdbc:mysql://117.72.45.164:3306/tradeinfo?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=UTC
+      username: chaser
+      password: Qq1036846223@
+      max-active: 20
+      max-wait: 5000
+      initial-size: 1
+      filters: stat,log4j,wall
+      validation-query: SELECT 'X'   #验证连接
+      enable: true
+      #监控配置
+      stat-view-servlet:
+        enabled: true
+        login-username: chaser
+        login-password: Qq1036846223@
+        url-pattern: /druid/*
+
+  servlet:
+    multipart:
+      max-file-size: 1MB
+      max-request-size: 10MB
+
+#配置mybatisplus
+mybatis-plus:
+  mapper-locations: classpath*:mapper/**/*Mapper.xml
+  global-config:
+    db-config:
+      id-type: auto
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
 server:
   # 端口 正式端口一般用10000
   port: 10000
   servlet:
     # 项目名称
-    context-path : ""
+    context-path: ""

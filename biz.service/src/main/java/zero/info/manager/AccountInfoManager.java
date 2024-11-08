@@ -3,31 +3,21 @@ package zero.info.manager;
 import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.BooleanUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestBody;
-import trade.info.biz.db.entity.AccountInfo;
-import trade.info.biz.db.entity.AccountRoleRel;
-import trade.info.biz.db.mapper.AccountInfoMapper;
-import trade.info.biz.db.mapper.AccountRoleRelMapper;
-import trade.info.biz.dto.AccountInfoDTO;
-import trade.info.biz.dto.SearchAccountRoleDTO;
-import trade.info.biz.enu.OperateTypeEnum;
-import trade.info.biz.enu.StatusEnum;
-import trade.info.biz.requset.BatchSearchRoleRequest;
-import trade.info.biz.response.PageResponse;
 import zero.info.db.entity.ContentInfoPO;
 import zero.info.db.mapper.ContentInfoMapper;
 import zero.info.dto.ContentInfoBO;
+import zero.info.enu.OperateTypeEnum;
+import zero.info.enu.StatusEnum;
 
 import javax.annotation.Resource;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -38,60 +28,63 @@ public class AccountInfoManager {
 
 
     //todo
-    public Pair<Boolean, String> addOrUpdateAccountInfo(ContentInfoBO infoBO) {
+    public Pair<Boolean, String> addOrUpdateContentInfo(ContentInfoBO infoBO) {
         try {
 
-            String hashId = infoBO.getHashId();
-            if (StringUtils.isEmpty(hashId)) {
-
+            if (infoBO == null) {
+                return Pair.of(false, "参数为空");
             }
-            QueryWrapper<ContentInfoPO> queryWrapper = new QueryWrapper<>();
-            queryWrapper.eq("hashId", infoDTO.getAccount());
-            queryWrapper.eq("status", StatusEnum.VALID.getCode());
-            queryWrapper.orderByDesc("id");
-            List<AccountInfo> dbInfoList = accountInfoMapper.selectList(queryWrapper);
 
-            AccountInfo accountInfo = ofAccountInfo(infoDTO);
+            Pair<Boolean, List<ContentInfoPO>> dbPair = queryContentInfoByIdOrHashId(infoBO);
+            if (dbPair == null || BooleanUtils.isNotTrue(dbPair.getLeft())) {
+                log.error("queryDbError,addOrUpdateContentInfo,infoBO={}", JSON.toJSONString(infoBO));
+                return Pair.of(false, "查询数据库失败");
+            }
 
-            if (infoDTO.getOperateType() == OperateTypeEnum.ADD.getCode()) {
+            if (Objects.equals(infoBO.getOperateType(), OperateTypeEnum.ADD.getCode())) {
 
                 //账户名不允许重复
-                if (CollectionUtils.isNotEmpty(dbInfoList)) {
+                if (CollectionUtils.isNotEmpty(dbPair.getRight())) {
                     return Pair.of(false, "账户名已存在");
                 }
-                accountInfo.setStatus(StatusEnum.VALID.getCode());
+                ContentInfoPO infoPO = ofContentInfoPO(infoBO);
+                if (StringUtils.isEmpty(infoPO.getHashId())) {
+                    infoPO.setHashId(generateHashIdBySHA(infoBO.getUrl()));
+                }
+                infoPO.setStatus(StatusEnum.VALID.getCode());
                 Date time = new Date();
-                accountInfo.setAddTime(time);
-                accountInfo.setUpdateTime(time);
+                infoPO.setAddTime(time);
+                infoPO.setUpdateTime(time);
 
-                int num = accountInfoMapper.insert(accountInfo);
+                int num = contentInfoMapper.insert(infoPO);
                 if (num == 1) {
-                    return Pair.of(true, String.valueOf(accountInfo.getId()));
+                    return Pair.of(true, String.valueOf(infoPO.getId()));
                 } else {
                     return Pair.of(false, "添加失败");
                 }
-            } else if (infoDTO.getOperateType() == OperateTypeEnum.UPDATE.getCode()) {
-                if (CollectionUtils.isEmpty(dbInfoList)) {
-                    return Pair.of(false, "账户不存在");
+            } else if (infoBO.getOperateType() == OperateTypeEnum.UPDATE.getCode()) {
+                if (CollectionUtils.isEmpty(dbPair.getRight())) {
+                    return Pair.of(false, "数据不存在");
                 }
-                AccountInfo dbInfo = dbInfoList.get(0);
-                long id = dbInfo.getId();
-                accountInfo.setId(id);
-                int num = accountInfoMapper.updateById(accountInfo);
+                long id = dbPair.getRight().get(0).getId();
+                ContentInfoPO infoPO = new ContentInfoPO();
+                infoPO.setId(id);
+                int num = contentInfoMapper.updateById(infoPO);
                 if (num == 1) {
                     return Pair.of(true, String.valueOf(id));
                 } else {
                     return Pair.of(false, "修改失败");
                 }
-            } else if (infoDTO.getOperateType() == OperateTypeEnum.DEL.getCode()) {
-                if (CollectionUtils.isEmpty(dbInfoList)) {
-                    return Pair.of(false, "账户不存在");
+            } else if (infoBO.getOperateType() == OperateTypeEnum.DEL.getCode()) {
+                if (CollectionUtils.isEmpty(dbPair.getRight())) {
+                    return Pair.of(false, "数据不存在");
                 }
-                AccountInfo dbInfo = dbInfoList.get(0);
-                long id = dbInfo.getId();
-                accountInfo.setId(id);
-                accountInfo.setStatus(StatusEnum.UN_VALID.getCode());
-                int num = accountInfoMapper.updateById(accountInfo);
+                long id = dbPair.getRight().get(0).getId();
+                ContentInfoPO infoPO = ofContentInfoPO(infoBO);
+                infoPO.setId(id);
+                infoPO.setStatus(StatusEnum.UN_VALID.getCode());
+                //只更新必要的字段
+                int num = contentInfoMapper.updateById(infoPO);
                 if (num == 1) {
                     return Pair.of(true, String.valueOf(id));
                 } else {
@@ -101,28 +94,82 @@ public class AccountInfoManager {
 
             return Pair.of(true, "");
         } catch (Exception e) {
-            log.error("addOrUpdateAccountInfo_error,infoDTO={}", JSON.toJSONString(infoDTO), e);
+            log.error("addOrUpdateContentInfo_error,infoBO={}", JSON.toJSONString(infoBO), e);
             return Pair.of(false, e.getMessage());
         }
     }
 
-    private AccountInfo ofAccountInfo(AccountInfoDTO infoDTO) {
-        AccountInfo accountInfo = new AccountInfo();
-        if (StringUtils.isNotEmpty(infoDTO.getAccount())) {
-            accountInfo.setAccount(infoDTO.getAccount());
+    public Pair<Boolean, List<ContentInfoPO>> queryContentInfoByIdOrHashId(ContentInfoBO infoBO) {
+        try {
+
+            if (infoBO == null) {
+                return Pair.of(false, null);
+            }
+
+            //优先通过id取
+            if (infoBO.getId() != null && infoBO.getId() > 0) {
+                Long id = infoBO.getId();
+                QueryWrapper<ContentInfoPO> queryWrapper = new QueryWrapper<>();
+                queryWrapper.eq("id", id);
+                queryWrapper.eq("status", StatusEnum.VALID.getCode());
+                queryWrapper.orderByDesc("id");
+                List<ContentInfoPO> dbInfoList = contentInfoMapper.selectList(queryWrapper);
+                return Pair.of(true, dbInfoList);
+            }
+
+            //通过url和hashId取
+            if (StringUtils.isEmpty(infoBO.getHashId()) && StringUtils.isEmpty(infoBO.getUrl())) {
+                return Pair.of(false, null);
+            }
+            String hashId = infoBO.getHashId();
+            if (StringUtils.isEmpty(hashId)) {
+                hashId = generateHashIdBySHA(infoBO.getUrl());
+            }
+            if (StringUtils.isEmpty(hashId)) {
+                return Pair.of(false, null);
+            }
+
+            QueryWrapper<ContentInfoPO> queryWrapper = new QueryWrapper<>();
+            queryWrapper.eq("hashId", hashId);
+            queryWrapper.eq("status", StatusEnum.VALID.getCode());
+            queryWrapper.orderByDesc("id");
+            List<ContentInfoPO> dbInfoList = contentInfoMapper.selectList(queryWrapper);
+
+            return Pair.of(true, dbInfoList);
+        } catch (Exception e) {
+            log.error("queryContentInfoByIdOrHashId_error,infoDTO={}", JSON.toJSONString(infoBO), e);
         }
-        if (StringUtils.isNotEmpty(infoDTO.getPhone())) {
-            accountInfo.setPhone(infoDTO.getPhone());
+        return Pair.of(false, null);
+    }
+
+
+    private ContentInfoPO ofContentInfoPO(ContentInfoBO infoBO) {
+        ContentInfoPO infoPO = new ContentInfoPO();
+        if (StringUtils.isNotEmpty(infoBO.getContent())) {
+            infoPO.setContent(infoBO.getContent());
         }
-        if (StringUtils.isNotEmpty(infoDTO.getPassword())) {
-            accountInfo.setPassword(infoDTO.getPassword());
+        if (StringUtils.isNotEmpty(infoBO.getContentType())) {
+            infoPO.setContentType(infoBO.getContentType());
         }
-        return accountInfo;
+        if (StringUtils.isNotEmpty(infoBO.getAiType())) {
+            infoPO.setAiType(infoBO.getAiType());
+        }
+        if (StringUtils.isNotEmpty(infoBO.getHashId())) {
+            infoPO.setHashId(infoBO.getHashId());
+        }
+        if (StringUtils.isNotEmpty(infoBO.getUrl())) {
+            infoPO.setUrl(infoBO.getUrl());
+        }
+        if (infoBO.getId() == null) {
+            infoPO.setId(infoBO.getId());
+        }
+        return infoPO;
     }
 
     //生成hashid
-    public static String generateUniqueIdentifier(String input) {
+    public static String generateHashIdBySHA(String input) {
         try {
+            int maxLength = 10;
             // 创建 SHA-256 的 MessageDigest 实例
             MessageDigest digest = MessageDigest.getInstance("SHA-256");
             // 计算输入字符串的哈希值
@@ -131,14 +178,20 @@ public class AccountInfoManager {
             StringBuilder hexString = new StringBuilder();
             for (byte b : hashBytes) {
                 String hex = Integer.toHexString(0xff & b);
-                if (hex.length() == 1) hexString.append('0');
+                if (hex.length() == 1) {
+                    hexString.append('0');
+                }
                 hexString.append(hex);
+                if (hexString.length() > maxLength) {
+                    break;
+                }
             }
             // 截取前10个字符
-            return hexString.toString().substring(0, 10);
+            return hexString.toString().substring(0, maxLength);
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
+            log.error("generateHashIdBySHA_error,input={}", input, e);
         }
+        return null;
     }
 
 
