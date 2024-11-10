@@ -18,7 +18,9 @@ public class ContentInfoBO implements Serializable {
      */
     private Integer operateType;
 
-    //'内容类型'
+    /**
+     * @see ContentTypeEnum
+     */
     private String contentType;
     //'原始内容URL'
     private String url;
@@ -27,7 +29,7 @@ public class ContentInfoBO implements Serializable {
     private String hashId;
     //'AI工具类型'
     /**
-     * @see ContentTypeEnum
+     * @see AITypeEnum
      */
     private String aiType;
 

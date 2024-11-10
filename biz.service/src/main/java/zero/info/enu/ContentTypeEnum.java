@@ -1,6 +1,7 @@
 package zero.info.enu;
 
 public enum ContentTypeEnum {
+    UN_KNOWN(0, "未知"),
     AI(1, "ai行业"),
     WEB3(2, "web3行业"),
     ;
@@ -13,6 +14,13 @@ public enum ContentTypeEnum {
         this.desc = desc;
     }
 
+    public static ContentTypeEnum convertWebSiteParseTypeEnum(WebSiteParseTypeEnum parseTypeEnum) {
+        if (parseTypeEnum == WebSiteParseTypeEnum.AI_BASE_COM) {
+            return ContentTypeEnum.AI;
+        }
+        return ContentTypeEnum.UN_KNOWN;
+    }
+
     public Integer getCode() {
         return code;
     }
@@ -20,4 +28,5 @@ public enum ContentTypeEnum {
     public String getDesc() {
         return desc;
     }
+
 }
