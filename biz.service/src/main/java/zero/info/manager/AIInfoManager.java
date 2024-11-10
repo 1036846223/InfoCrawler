@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.springframework.stereotype.Service;
 import zero.info.dto.UrlContentDTO;
+import zero.info.enu.WebSiteParseTypeEnum;
 import zero.info.item.Spider;
 import zero.info.processor.example.AIBaseComZHProcessor;
 import zero.info.request.InfoSearchRequest;
@@ -35,6 +36,20 @@ public class AIInfoManager {
     }
 
     public List<ArticleDTO> aiBaseSearch() {
+        try {
+            AIBaseSearchPipeline pipeline = new AIBaseSearchPipeline();
+            Spider.create(new AIBaseComZHProcessor()).addUrl(AI_BASE_NEWS_URL).addPipeline(pipeline).run();
+            List<ArticleDTO> contents = pipeline.getContents();
+//            System.out.println(contents);
+            return contents;
+        } catch (Exception e) {
+            log.error("aiBaseSearch_error", e);
+        }
+        return new ArrayList<>();
+    }
+
+    //todo
+    public List<ArticleDTO> webSiteParse(WebSiteParseTypeEnum webSiteParseTypeEnum) {
         try {
             AIBaseSearchPipeline pipeline = new AIBaseSearchPipeline();
             Spider.create(new AIBaseComZHProcessor()).addUrl(AI_BASE_NEWS_URL).addPipeline(pipeline).run();

@@ -33,6 +33,7 @@ public class AIContentTimeManager {
     //todo
     public Pair<Boolean, String> dataCollection() {
         try {
+            //从指定的网站取出全部的url存下来
 
 
             return Pair.of(true, "");
