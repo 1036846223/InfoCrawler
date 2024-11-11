@@ -8,8 +8,10 @@ import zero.info.item.Page;
 import zero.info.item.Site;
 import zero.info.item.Spider;
 import zero.info.processor.PageProcessor;
+import zero.info.service.AIBaseSearchPagePipeline;
 import zero.info.service.AIBaseSearchPipeline;
 import zero.post.dto.ArticleDTO;
+import zero.post.dto.ArticleDetails;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +21,7 @@ public class AIBaseComZHProcessor implements PageProcessor {
 
     private Site site = Site.me()//.setHttpProxy(new HttpHost("127.0.0.1",8888))
             .setRetryTimes(3).setSleepTime(1000).setUseGzip(true);
+    private static String baseUrl = "https://www.aibase.com";
 
     @Override
     public void process(Page page) {
@@ -31,6 +34,11 @@ public class AIBaseComZHProcessor implements PageProcessor {
 
         // 遍历每个父元素，提取时间、标题和介绍信息
         for (Element articleElement : articleElements) {
+
+            // 提取链接信息
+            String link = articleElement.attr("href");
+            String url = baseUrl + link;
+
 //            // 提取时间信息
             Element timeElement = articleElement.selectFirst("div.text-sm.text-gray-400.flex.items-center.space-x-1");
             String time = timeElement != null ? timeElement.text() : "";
@@ -43,14 +51,8 @@ public class AIBaseComZHProcessor implements PageProcessor {
             Element introElement = articleElement.selectFirst("div.py-2.hidden.md\\:block");
             String introduction = introElement != null ? introElement.text() : "";
 
-//
-//            // 提取介绍信息，确保选择器路径准确
-//            Element introElement = articleElement.selectFirst("div.py-2.hidden.md\\:block div.text-\\[15px\\].line-clamp-2.text-surface-500");
-//            String introduction = introElement != null ? introElement.text() : "";
-//
-
             // 创建 Article 对象并添加到列表中
-            ArticleDTO articleDTO = new ArticleDTO(time, title, introduction);
+            ArticleDTO articleDTO = new ArticleDTO(time, title, introduction, url);
             articleDTODTOS.add(articleDTO);
         }
 
@@ -66,7 +68,8 @@ public class AIBaseComZHProcessor implements PageProcessor {
 
     public static void main(String[] args) {
         //single download
-        String url2="https://www.aibase.com/zh/news";
+        String url2 = "https://www.aibase.com/zh/news/13142";
+//        String url1 = "https://www.aibase.com/zh/news/13084";
 //        Spider.create(new AIBaseComZHProcessor()).addUrl(url2).run();
         AIBaseSearchPipeline pipeline = new AIBaseSearchPipeline();
         Spider.create(new AIBaseComZHProcessor()).addUrl(url2).addPipeline(pipeline).run();

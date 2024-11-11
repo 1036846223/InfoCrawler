@@ -23,7 +23,8 @@ public class AIBaseSearchPipeline implements Pipeline {
             String time = content.getString("time");
             String title = content.getString("title");
             String introduction = content.getString("introduction");
-            contents.add(new ArticleDTO(time, title, introduction));
+            String url = content.getString("url");
+            contents.add(new ArticleDTO(time, title, introduction, url));
         }
     }
 

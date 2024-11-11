@@ -81,9 +81,9 @@ public class AIContentTimeManager {
 
     public List<ArticleDTO> webSiteParse(WebSiteParseTypeEnum webSiteParseTypeEnum) {
         try {
-            List<ArticleDTO> dtoList = webSiteParseChoose.defaultSearch(webSiteParseTypeEnum);
-
-            return dtoList;
+//            List<ArticleDTO> dtoList = webSiteParseChoose.defaultSearch(webSiteParseTypeEnum);
+//
+//            return dtoList;
         } catch (Exception e) {
             log.error("webSiteParse_error,webSiteParseTypeEnum={}", JSON.toJSONString(webSiteParseTypeEnum), e);
         }

@@ -62,7 +62,7 @@ public class ContentInfoManager {
                 } else {
                     return Pair.of(false, "添加失败");
                 }
-            } else if (infoBO.getOperateType() == OperateTypeEnum.UPDATE.getCode()) {
+            } else if (Objects.equals(infoBO.getOperateType(), OperateTypeEnum.UPDATE.getCode())) {
                 if (CollectionUtils.isEmpty(dbPair.getRight())) {
                     return Pair.of(false, "数据不存在");
                 }
@@ -75,7 +75,7 @@ public class ContentInfoManager {
                 } else {
                     return Pair.of(false, "修改失败");
                 }
-            } else if (infoBO.getOperateType() == OperateTypeEnum.DEL.getCode()) {
+            } else if (Objects.equals(infoBO.getOperateType(), OperateTypeEnum.DEL.getCode())) {
                 if (CollectionUtils.isEmpty(dbPair.getRight())) {
                     return Pair.of(false, "数据不存在");
                 }
